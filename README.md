@@ -29,7 +29,7 @@ Social network api is a back end designed around a Nosql database using Mongodb.
 
 ## Code Sample <a name = "code-sample"></a>
 
-![Sample Code](https://github.com/nicoguarino/e-commerce-/blob/main/images/sample_code.PNG?raw=true "Sample Code")
+![Sample Code](https://github.com/nicoguarino/social-network-api/blob/main/images/code_sample.PNG?raw=true "Sample Code")
 
 ### Sample Code
 ```JavaScript Sample
