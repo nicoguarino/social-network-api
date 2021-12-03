@@ -4,7 +4,7 @@ const dateFormat = require('../utils/dateFormat');
 
 const ThoughtSchema = new Schema(
     {
-        throughText: {
+        thoughtText: {
             type: String,
             require: true,
             trim: true,

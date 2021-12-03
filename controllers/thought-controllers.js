@@ -55,7 +55,7 @@ const thoughtController = {
     },
 
     updateThought({ params, body }, res) {
-        Thought.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+        Thought.findOneAndUpdate({ _id: params.thoughtid }, body, { new: true, runValidators: true })
             .populate({ path: 'reactions', select: '-__v' })
             .select('-___v')
             .then(dbThoughtData => {
@@ -70,24 +70,25 @@ const thoughtController = {
     },
 
     deleteThought({ params }, res) {
-        Thought.findOneAndDelete({ _id: params.id })
-            .then(({ _id }) =>
-                User.findOneAndUpdate({}, { $pull: { thoughts: _id } }, { new: true })
-            )
+        Thought.findOneAndDelete({ _id: params.thoughtid })
+            .then(({ _id }) => {
+                console.log(_id);
+                return User.findOneAndUpdate({ _id: params.userId }, { $pull: { thoughts: { thoughtid: params.thoughtid } } }, { new: true })
+            })
             .then(dbThoughtData => {
                 if (!dbThoughtData) {
                     res.status(404).json({ message: 'No thought found with this id!' });
                     return;
                 }
-                res.json(dbUserData);
+                res.json(dbThoughtData);
             })
             .catch(err => res.status(400).json(err));
     },
 
-    addReaction({ params }, res) {
+    addReaction({ params, body }, res) {
         Thought.findOneAndUpdate(
-            { _id: params.thoughtId },
-            { $addToSet: { reactions: params.reactionId } },
+            { _id: params.thoughtid },
+            { $addToSet: { reactions: body } },
             { new: true, runValidators: true }
         )
             .then(dbThoughtData => {
@@ -102,18 +103,12 @@ const thoughtController = {
 
 
     removeReaction({ params }, res) {
-        Thought.findOneAndUpdate({ _id: params.id },
-            { $pull: { reactions: params.reactionsId } },
-            { new: true })
+        Thought.findOneAndUpdate({ _id: params.thoughtid },
+            { $pull: { reactions: { reactionId: params.reactionId } } },
+            { new: true, runValidators: true })
             .then(dbThoughtData => {
                 if (!dbThoughtData) {
                     return res.status(404).json({ message: 'No thought found with this id' });
-                }
-            })
-            .then(dbThoughtData => {
-                if (!dbThoughtData) {
-                    res.status(404).json({ message: 'No thought found with this id' });
-                    return;
                 }
                 res.json(dbThoughtData);
             })
